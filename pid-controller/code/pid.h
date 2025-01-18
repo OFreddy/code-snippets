@@ -52,6 +52,7 @@ typedef struct S_PID
 } T_PID;
 
 extern void PID_Init(T_PID *pid, PID_BASE_TYPE kp, PID_BASE_TYPE ki, PID_BASE_TYPE kd, PID_SAMPLETIME_MS_TYPE sampletime);
+extern void PID_SetTunings(T_PID *pid, PID_BASE_TYPE kp, PID_BASE_TYPE ki, PID_BASE_TYPE kd);
 extern PID_BASE_TYPE PID_Compute(T_PID *pid, PID_BASE_TYPE setpoint, PID_BASE_TYPE input, PID_SAMPLETIME_MS_TYPE currenttime);
 
 

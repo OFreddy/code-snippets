@@ -4,10 +4,6 @@
 
 void PID_Init(T_PID *pid, PID_BASE_TYPE kp, PID_BASE_TYPE ki, PID_BASE_TYPE kd, PID_SAMPLETIME_MS_TYPE sampletime)
 {
-	pid->kp = kp;
-	pid->ki = ki;
-	pid->kd = kd;
-	
 	pid->sampletime = sampletime;
 	
 	pid->pterm = pid->iterm = pid->dterm = 0.0; 
@@ -17,6 +13,17 @@ void PID_Init(T_PID *pid, PID_BASE_TYPE kp, PID_BASE_TYPE ki, PID_BASE_TYPE kd, 
 	pid->maxoutput = 100.0;
 	
 	pid->preverror = 0.0;
+	
+	PID_SetTunings(pid, kp, ki, kd);
+}
+
+void PID_SetTunings(T_PID *pid, PID_BASE_TYPE kp, PID_BASE_TYPE ki, PID_BASE_TYPE kd)
+{
+	PID_BASE_TYPE SampleTimeInSec = ((double)pid->sampletime) / 1000.0;
+	
+	pid->kp = kp;
+	pid->ki = ki * SampleTimeInSec;
+	pid->kd = kd / SampleTimeInSec;
 }
 
 PID_BASE_TYPE PID_Compute(T_PID *pid, PID_BASE_TYPE setpoint, PID_BASE_TYPE input, PID_SAMPLETIME_MS_TYPE currenttime)

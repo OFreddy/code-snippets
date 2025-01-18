@@ -25,9 +25,9 @@ int main()
 {
     // Beispielhafte Anwendung des PID-Reglers
     T_PID pid;
-    PID_Init(&pid, 1.0, 0.1, 0.05, 10); // kp, ki, kd, sample time in ms
+    PID_Init(&pid, 1.0, 10.0, 0.5, 10); // kp, ki, kd, sample time in ms
 
-    double setpoint = 100.0; // Sollwert
+    double setpoint = 50.0; // Sollwert
     double actual = 0.0; // Istwert
     double dt = 0.01; // Zeitschritt in Sekunden
 
@@ -38,14 +38,13 @@ int main()
     // Simulation einer Regelungsschleife
     for (int i = 0; i < 100; i++) 
 	{
-
         double output = PID_Compute(&pid, setpoint, actual, millis);
 
         // Regelstreckenmodell anwenden
         actual = ProcessModel(output, state, dt);
 
-        printf("Schritt: %d, ms: %d, Sollwert: %.2f, Istwert: %.2f, Ausgabe: %.2f (p: %.2f i: %.2f d: %.2f)\n", 
-			i, millis, setpoint, actual, output, pid.pterm, pid.iterm, pid.dterm);
+        printf("Schritt: %d, ms: %d, Sollwert: %.2f, Istwert: %.2f, Ausgabe: %.2f (e: %.2f p: %.2f i: %.2f d: %.2f)\n", 
+			i, millis, setpoint, actual, output, pid.error, pid.pterm, pid.iterm, pid.dterm);
 		
 		millis += 10;
     }
