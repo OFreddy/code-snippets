@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 
 #include "pid.h"
 
@@ -7,6 +7,8 @@ void PID_Init(T_PID *pid, PID_BASE_TYPE kp, PID_BASE_TYPE ki, PID_BASE_TYPE kd, 
 	pid->sampletime = sampletime;
 	
 	pid->pterm = pid->iterm = pid->dterm = 0.0; 
+	
+	pid->lastinput = 0.0;
 	
 	// Default min and max output for anti wind-up
 	pid->minoutput = 0.0;
@@ -46,6 +48,8 @@ PID_BASE_TYPE PID_Compute(T_PID *pid, PID_BASE_TYPE setpoint, PID_BASE_TYPE inpu
 		
 		pid->lastinput = input;
 		pid->lastsampletime = currenttime;
+		
+		printf("E: %.2f P: %.2f I: %.2F D: %.2f\n", pid->error, pid->pterm, pid->iterm, pid->dterm);
 	}
 	
 	return pid->output;

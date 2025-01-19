@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "pid.h"
+#include "pid-v1.h"
 
 // Erweiterte Regelstrecke (z. B. ein System 2. Ordnung)
 double ProcessModel(double input, double *state, double dt) {
@@ -24,27 +24,33 @@ double ProcessModel(double input, double *state, double dt) {
 int main() 
 {
     // Beispielhafte Anwendung des PID-Reglers
-    T_PID pid;
-    PID_Init(&pid, 1.0, 10.0, 0.05, 10); // kp, ki, kd, sample time in ms
+	
+    //PID_Init(&pid, 1.0, 10.0, 0.05, 10); // kp, ki, kd, sample time in ms
 
     double setpoint = 50.0; // Sollwert
     double actual = 0.0; // Istwert
+	double output = 0.0;
     double dt = 0.01; // Zeitschritt in Sekunden
 
+	PID *pid = new PID(&actual, &output, &setpoint, 1.0, 10.0, 0.05, P_ON_E, DIRECT);
+	pid->SetOutputLimits(0.0, 100.0);
+    pid->SetSampleTime(10);
+	pid->SetMode(AUTOMATIC);
+	
 	double state[1] = {0.0}; // Zustandsvariable für die Regelstrecke
 
-	PID_SAMPLETIME_MS_TYPE millis = 10;
+	unsigned long millis = 10;
 
     // Simulation einer Regelungsschleife
     for (int i = 0; i < 100; i++) 
 	{
-        double output = PID_Compute(&pid, setpoint, actual, millis);
+		pid->Compute(millis);
 
         // Regelstreckenmodell anwenden
         actual = ProcessModel(output, state, dt);
 
-        printf("Schritt: %d, ms: %d, Sollwert: %.2f, Istwert: %.2f, Ausgabe: %.2f (e: %.2f p: %.2f i: %.2f d: %.2f)\n", 
-			i, millis, setpoint, actual, output, pid.error, pid.pterm, pid.iterm, pid.dterm);
+        printf("Schritt: %d, ms: %d, Sollwert: %.2f, Istwert: %.2f, Ausgabe: %.2f\n", 
+			i, millis, setpoint, actual, output);
 		
 		millis += 10;
     }
